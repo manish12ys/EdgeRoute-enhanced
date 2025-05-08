@@ -6,7 +6,7 @@ services:
       pip install -r requirements.txt
       python -m flask db upgrade
       python create_default_avatar.py
-    startCommand: gunicorn "app:create_app('production')"
+    startCommand: gunicorn "run:app"
     plan: free
 
     envVars:
