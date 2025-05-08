@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: edgeroute
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python -m flask db upgrade
+      python create_default_avatar.py
+    startCommand: gunicorn "app:create_app('production')"
+    plan: free
+
+    envVars:
+      - key: FLASK_APP
+        value: run.py
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_CONFIG
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: edgeroute-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+
+databases:
+  - name: edgeroute-db
+    databaseName: edgeroute
+    user: edgeroute
+    plan: free

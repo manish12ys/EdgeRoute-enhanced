@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h3 mb-0">My Custom Roadmaps</h1>
+            <p class="text-muted">Create and manage your personalized learning paths</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('roadmap.create_custom_roadmap') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> Create New Roadmap
+            </a>
+        </div>
+    </div>
+
+    <!-- My Custom Roadmaps -->
+    <div class="card border-0 shadow-sm mb-4 roadmap-gradient-container">
+        <div class="card-header">
+            <h2 class="h5 mb-0">
+                <i class="fas fa-map me-2"></i> My Roadmaps
+            </h2>
+        </div>
+        <div class="card-body">
+            {% if custom_roadmaps %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for roadmap in custom_roadmaps %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm roadmap-gradient-container">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ roadmap.title }}</h5>
+                                    <p class="card-text text-muted">{{ roadmap.description[:100] }}{% if roadmap.description|length > 100 %}...{% endif %}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-primary">{{ roadmap.category }}</span>
+                                            <span class="badge bg-secondary">{{ roadmap.difficulty }}</span>
+                                            {% if roadmap.is_public %}
+                                                <span class="badge bg-success">Public</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Private</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ url_for('roadmap.view_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i> View
+                                        </a>
+                                        <a href="{{ url_for('roadmap.edit_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> You haven't created any custom roadmaps yet.
+                    <a href="{{ url_for('roadmap.create_custom_roadmap') }}" class="alert-link">Create your first roadmap</a> or
+                    <a href="{{ url_for('roadmap.list_roadmaps') }}" class="alert-link">clone an existing one</a>.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Public Custom Roadmaps -->
+    <div class="card border-0 shadow-sm mb-4 roadmap-gradient-container">
+        <div class="card-header">
+            <h2 class="h5 mb-0">
+                <i class="fas fa-globe me-2"></i> Public Custom Roadmaps
+            </h2>
+        </div>
+        <div class="card-body">
+            {% if public_roadmaps %}
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for roadmap in public_roadmaps %}
+                        <div class="col">
+                            <div class="card h-100 shadow-sm roadmap-gradient-container">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ roadmap.title }}</h5>
+                                    <p class="card-text text-muted">{{ roadmap.description[:100] }}{% if roadmap.description|length > 100 %}...{% endif %}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <span class="badge bg-primary">{{ roadmap.category }}</span>
+                                            <span class="badge bg-secondary">{{ roadmap.difficulty }}</span>
+                                            <span class="badge bg-info">By {{ roadmap.creator.username }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top-0">
+                                    <div class="d-flex justify-content-between">
+                                        <a href="{{ url_for('roadmap.view_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye me-1"></i> View
+                                        </a>
+                                        <a href="{{ url_for('roadmap.clone_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-copy me-1"></i> Clone
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> There are no public custom roadmaps available yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tips and Help -->
+    <div class="card border-0 shadow-sm roadmap-gradient-container">
+        <div class="card-header">
+            <h2 class="h5 mb-0">
+                <i class="fas fa-lightbulb me-2"></i> Tips for Creating Great Roadmaps
+            </h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Structure Your Content</h5>
+                    <ul>
+                        <li>Break down complex topics into manageable steps</li>
+                        <li>Arrange nodes in a logical progression</li>
+                        <li>Include prerequisites for each section</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>Add Quality Resources</h5>
+                    <ul>
+                        <li>Include a mix of articles, videos, and interactive content</li>
+                        <li>Provide both beginner and advanced resources</li>
+                        <li>Link to free resources when possible</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

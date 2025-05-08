@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h3 mb-0">Edit Learning Node</h1>
+            <p class="text-muted">{{ roadmap.title }}</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('roadmap.edit_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to Roadmap
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-edit me-2"></i> Edit Node: {{ node.title }}
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('roadmap.edit_custom_roadmap_node', roadmap_id=roadmap.id, node_id=node.id) }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {% if form.description.errors %}
+                                {{ form.description(class="form-control is-invalid", rows=10) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.description(class="form-control", rows=10) }}
+                            {% endif %}
+                            <div class="form-text">You can use markdown formatting in your description.</div>
+                        </div>
+                        {{ form.position(id="position-input") }}
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('roadmap.manage_node_links', roadmap_id=roadmap.id, node_id=node.id) }}" class="btn btn-outline-info">
+                                <i class="fas fa-link me-2"></i> Manage Resource Links
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Delete Node -->
+            <div class="card border-0 shadow-sm mt-4 roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0 text-danger">
+                        <i class="fas fa-trash me-2"></i> Delete Node
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p>This action will permanently delete this node and cannot be undone.</p>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteNodeModal">
+                        Delete Node
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-info-circle me-2"></i> Node Information
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Position:</strong> {{ node.position + 1 }}</p>
+                    
+                    {% set links = node.get_links() %}
+                    <p><strong>Resource Links:</strong> {{ links|length }}</p>
+                    
+                    <div class="mt-3">
+                        <a href="{{ url_for('roadmap.manage_node_links', roadmap_id=roadmap.id, node_id=node.id) }}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-link me-1"></i> Manage Resource Links
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mt-4 roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-lightbulb me-2"></i> Formatting Tips
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p>You can use markdown formatting in your description:</p>
+                    <ul class="mb-0">
+                        <li><code># Heading 1</code> for main headings</li>
+                        <li><code>## Heading 2</code> for subheadings</li>
+                        <li><code>**bold text**</code> for <strong>bold text</strong></li>
+                        <li><code>*italic text*</code> for <em>italic text</em></li>
+                        <li><code>- item</code> for bullet lists</li>
+                        <li><code>1. item</code> for numbered lists</li>
+                        <li><code>[link text](url)</code> for links</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Node Modal -->
+<div class="modal fade" id="deleteNodeModal" tabindex="-1" aria-labelledby="deleteNodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteNodeModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the node "{{ node.title }}"? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('roadmap.delete_custom_roadmap_node', roadmap_id=roadmap.id, node_id=node.id) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

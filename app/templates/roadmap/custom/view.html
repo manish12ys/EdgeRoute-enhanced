@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<style>
+    .roadmap-node {
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+    }
+
+    .roadmap-node:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .resource-link {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+        text-decoration: none;
+        color: #495057;
+        transition: all 0.2s ease;
+    }
+
+    .resource-link:hover {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+
+    .resource-link i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .resource-article i { color: #0d6efd; }
+    .resource-video i { color: #dc3545; }
+    .resource-course i { color: #198754; }
+    .resource-book i { color: #6f42c1; }
+    .resource-tool i { color: #fd7e14; }
+    .resource-opensource i { color: #20c997; }
+    .resource-other i { color: #6c757d; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Roadmap Header -->
+    <div class="p-4 rounded-3 mb-4 roadmap-header roadmap-gradient-container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">{{ roadmap.title }}</h1>
+                <p class="lead">{{ roadmap.description }}</p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="badge bg-primary">{{ roadmap.category }}</span>
+                    <span class="badge bg-secondary">{{ roadmap.difficulty }}</span>
+                    {% if roadmap.tags %}
+                        {% for tag in roadmap.tags.split(',') %}
+                            <span class="badge bg-info">{{ tag.strip() }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    {% if roadmap.is_public %}
+                        <span class="badge bg-success">Public</span>
+                    {% else %}
+                        <span class="badge bg-warning">Private</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="d-flex flex-column flex-md-row gap-2 justify-content-md-end">
+                    {% if current_user.is_authenticated and current_user.id == roadmap.user_id %}
+                        <a href="{{ url_for('roadmap.edit_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i> Edit Roadmap
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('roadmap.clone_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-success">
+                            <i class="fas fa-copy me-2"></i> Clone Roadmap
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('roadmap.list_custom_roadmaps') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Roadmaps
+                    </a>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">Created by {{ roadmap.creator.username }} on {{ roadmap.created_at.strftime('%B %d, %Y') }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roadmap Content -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Nodes -->
+            <div id="roadmapNodes">
+                {% if nodes %}
+                    {% for node in nodes %}
+                        <div class="card roadmap-node roadmap-gradient-container mb-4" id="node-{{ node.id }}">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h3 class="mb-0">{{ node.title }}</h3>
+                                <span class="badge bg-secondary">Step {{ loop.index }}</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="node-content mb-4">
+                                    {{ node.description|safe }}
+                                </div>
+                                
+                                {% set links = node.get_links() %}
+                                {% if links %}
+                                    <h5 class="mt-4 mb-3">Resources</h5>
+                                    <div class="resources-list">
+                                        {% for link in links %}
+                                            <a href="{{ link.url }}" target="_blank" rel="noopener" class="resource-link resource-{{ link.type }}">
+                                                {% if link.type == 'article' %}
+                                                    <i class="fas fa-file-alt"></i>
+                                                {% elif link.type == 'video' %}
+                                                    <i class="fas fa-video"></i>
+                                                {% elif link.type == 'course' %}
+                                                    <i class="fas fa-graduation-cap"></i>
+                                                {% elif link.type == 'book' %}
+                                                    <i class="fas fa-book"></i>
+                                                {% elif link.type == 'tool' %}
+                                                    <i class="fas fa-tools"></i>
+                                                {% elif link.type == 'opensource' %}
+                                                    <i class="fab fa-github"></i>
+                                                {% else %}
+                                                    <i class="fas fa-link"></i>
+                                                {% endif %}
+                                                <span>{{ link.title }}</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> This roadmap doesn't have any content yet.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Table of Contents -->
+            <div class="card mb-4 roadmap-gradient-container">
+                <div class="card-header">
+                    <h4 class="mb-0">Table of Contents</h4>
+                </div>
+                <div class="card-body">
+                    {% if nodes %}
+                        <div class="list-group list-group-flush">
+                            {% for node in nodes %}
+                                <a href="#node-{{ node.id }}" class="list-group-item list-group-item-action bg-transparent">
+                                    {{ loop.index }}. {{ node.title }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No content available.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Roadmap Info -->
+            <div class="card mb-4 roadmap-gradient-container">
+                <div class="card-header">
+                    <h4 class="mb-0">Roadmap Info</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Created by:</strong> {{ roadmap.creator.username }}</p>
+                    <p><strong>Created on:</strong> {{ roadmap.created_at.strftime('%B %d, %Y') }}</p>
+                    <p><strong>Last updated:</strong> {{ roadmap.updated_at.strftime('%B %d, %Y') }}</p>
+                    <p><strong>Category:</strong> {{ roadmap.category }}</p>
+                    <p><strong>Difficulty:</strong> {{ roadmap.difficulty }}</p>
+                    <p><strong>Number of steps:</strong> {{ nodes|length }}</p>
+                    
+                    {% if roadmap.cloned_from %}
+                        <p><strong>Cloned from:</strong> <a href="{{ url_for('roadmap.view_roadmap', roadmap_id=roadmap.cloned_from) }}">Original roadmap</a></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card roadmap-gradient-container">
+                <div class="card-header">
+                    <h4 class="mb-0">Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if current_user.is_authenticated and current_user.id == roadmap.user_id %}
+                            <a href="{{ url_for('roadmap.edit_custom_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-primary">
+                                <i class="fas fa-edit me-2"></i> Edit Roadmap
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('roadmap.clone_roadmap', roadmap_id=roadmap.id) }}" class="btn btn-success">
+                                <i class="fas fa-copy me-2"></i> Clone Roadmap
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('roadmap.list_custom_roadmaps') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Roadmaps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

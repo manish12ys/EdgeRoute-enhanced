@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h3 mb-0">Create Custom Roadmap</h1>
+            <p class="text-muted">Design your own personalized learning path</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('roadmap.list_custom_roadmaps') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to My Roadmaps
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-map me-2"></i> Roadmap Details
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control") }}
+                            {% endif %}
+                            <div class="form-text">Choose a clear, descriptive title for your roadmap.</div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {% if form.description.errors %}
+                                {{ form.description(class="form-control is-invalid", rows=5) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.description(class="form-control", rows=5) }}
+                            {% endif %}
+                            <div class="form-text">Provide a detailed description of what learners will achieve by following this roadmap.</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.category.label(class="form-label") }}
+                                {% if form.category.errors %}
+                                    {{ form.category(class="form-select is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.category.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.category(class="form-select") }}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.difficulty.label(class="form-label") }}
+                                {% if form.difficulty.errors %}
+                                    {{ form.difficulty(class="form-select is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.difficulty.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.difficulty(class="form-select") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.tags.label(class="form-label") }}
+                            {% if form.tags.errors %}
+                                {{ form.tags(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.tags.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.tags(class="form-control") }}
+                            {% endif %}
+                            <div class="form-text">Enter comma-separated tags to help others find your roadmap (e.g., "javascript, frontend, react").</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form.is_public(class="form-check-input") }}
+                                {{ form.is_public.label(class="form-check-label") }}
+                                <div class="form-text">Public roadmaps can be viewed by all users and may be cloned by others.</div>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-info-circle me-2"></i> About Custom Roadmaps
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p>Custom roadmaps allow you to create personalized learning paths for any topic or skill.</p>
+                    
+                    <h6 class="mt-3">How it works:</h6>
+                    <ol>
+                        <li>Create a roadmap with basic information</li>
+                        <li>Add learning nodes with content and resources</li>
+                        <li>Arrange nodes in the desired order</li>
+                        <li>Optionally share your roadmap with others</li>
+                    </ol>
+                    
+                    <p class="mt-3">After creating your roadmap, you'll be able to add learning nodes and resources to build out your complete learning path.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mt-4 roadmap-gradient-container">
+                <div class="card-header">
+                    <h2 class="h5 mb-0">
+                        <i class="fas fa-lightbulb me-2"></i> Tips
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li>Be specific about the skills or knowledge your roadmap covers</li>
+                        <li>Choose an appropriate difficulty level to set expectations</li>
+                        <li>Use relevant tags to make your roadmap discoverable</li>
+                        <li>Consider making your roadmap public to help others learn</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
