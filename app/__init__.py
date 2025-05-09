@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from config import config
 import json
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -12,6 +13,9 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
 bcrypt = Bcrypt()
+
+# Flag to determine whether to use Appwrite
+USE_APPWRITE = os.environ.get('USE_APPWRITE', 'false').lower() == 'true'
 
 def create_app(config_name='default'):
     app = Flask(__name__)
@@ -22,6 +26,16 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+
+    # Initialize Appwrite if enabled
+    if USE_APPWRITE:
+        from app.appwrite import appwrite
+        appwrite.init_app(app)
+
+        # Set up Appwrite collections
+        with app.app_context():
+            from app.appwrite.utils import setup_appwrite_collections
+            setup_appwrite_collections()
 
     # Add custom Jinja2 filters
     app.jinja_env.filters['tojson'] = json.dumps

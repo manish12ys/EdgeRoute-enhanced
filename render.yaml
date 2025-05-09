@@ -24,6 +24,17 @@ services:
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
+      # Appwrite configuration
+      - key: USE_APPWRITE
+        value: false
+      - key: APPWRITE_ENDPOINT
+        value: https://cloud.appwrite.io/v1
+      - key: APPWRITE_PROJECT_ID
+        sync: false
+      - key: APPWRITE_API_KEY
+        sync: false
+      - key: APPWRITE_DATABASE_ID
+        value: edgeroute
 
 databases:
   - name: edgeroute-db

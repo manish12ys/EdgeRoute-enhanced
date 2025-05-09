@@ -16,6 +16,13 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     REMEMBER_COOKIE_DURATION = timedelta(days=14)
 
+    # Appwrite configuration
+    USE_APPWRITE = os.environ.get('USE_APPWRITE', 'false').lower() == 'true'
+    APPWRITE_ENDPOINT = os.environ.get('APPWRITE_ENDPOINT', 'https://cloud.appwrite.io/v1')
+    APPWRITE_PROJECT_ID = os.environ.get('APPWRITE_PROJECT_ID')
+    APPWRITE_API_KEY = os.environ.get('APPWRITE_API_KEY')
+    APPWRITE_DATABASE_ID = os.environ.get('APPWRITE_DATABASE_ID', 'edgeroute')
+
     # Security headers
     SECURITY_HEADERS = {
         'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:;",

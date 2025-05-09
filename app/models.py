@@ -7,7 +7,13 @@ import uuid
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    from app import USE_APPWRITE
+
+    if USE_APPWRITE:
+        from app.appwrite.models import User as AppwriteUser
+        return AppwriteUser.get(user_id)
+    else:
+        return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
