@@ -26,7 +26,7 @@ services:
         generateValue: true
       # Appwrite configuration
       - key: USE_APPWRITE
-        value: false
+        value: "true"
       - key: APPWRITE_ENDPOINT
         value: https://cloud.appwrite.io/v1
       - key: APPWRITE_PROJECT_ID
@@ -34,7 +34,23 @@ services:
       - key: APPWRITE_API_KEY
         sync: false
       - key: APPWRITE_DATABASE_ID
-        value: edgeroute
+        sync: false
+      - key: APPWRITE_USERS_COLLECTION_ID
+        value: users
+      - key: APPWRITE_ROADMAPS_COLLECTION_ID
+        value: roadmaps
+      - key: APPWRITE_ROADMAP_NODES_COLLECTION_ID
+        value: roadmap_nodes
+      - key: APPWRITE_USER_PROGRESS_COLLECTION_ID
+        value: user_progress
+      - key: APPWRITE_COMMENTS_COLLECTION_ID
+        value: comments
+      - key: APPWRITE_CUSTOM_ROADMAPS_COLLECTION_ID
+        value: custom_roadmaps
+      - key: APPWRITE_CUSTOM_ROADMAP_NODES_COLLECTION_ID
+        value: custom_roadmap_nodes
+      - key: APPWRITE_STORAGE_ID
+        value: profile_pictures
 
 databases:
   - name: edgeroute-db
