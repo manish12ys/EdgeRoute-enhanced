@@ -17,10 +17,15 @@ def search():
     query = request.args.get('q', '')
     if query:
         roadmaps = Roadmap.query.filter(
-            (Roadmap.title.contains(query)) | 
-            (Roadmap.description.contains(query)) | 
+            (Roadmap.title.contains(query)) |
+            (Roadmap.description.contains(query)) |
             (Roadmap.tags.contains(query))
         ).all()
     else:
         roadmaps = []
     return render_template('main/search.html', title='Search', roadmaps=roadmaps, query=query)
+
+@main.route("/admin-panel-314159")
+def secret_admin():
+    """Secret admin panel Easter egg"""
+    return render_template('main/secret_admin.html', title='Secret Admin Panel')
