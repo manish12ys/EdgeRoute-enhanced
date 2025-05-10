@@ -7,7 +7,7 @@ import uuid
 
 @login_manager.user_loader
 def load_user(user_id):
-    from app import USE_APPWRITE
+    from app import USE_APPWRITE, USE_AUTH0
 
     if USE_APPWRITE:
         from app.appwrite.models import User as AppwriteUser
@@ -23,6 +23,7 @@ class User(db.Model, UserMixin):
     avatar = db.Column(db.String(20), nullable=False, default='default.jpg')
     date_joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     is_admin = db.Column(db.Boolean, default=False)
+    auth0_user_id = db.Column(db.String(100), nullable=True, unique=True)
 
     # Relationships
     progress = db.relationship('UserProgress', backref='user', lazy=True)

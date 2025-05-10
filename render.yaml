@@ -24,9 +24,23 @@ services:
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
+      # Auth0 configuration
+      - key: USE_AUTH0
+        value: "true"
+      - key: AUTH0_DOMAIN
+        sync: false
+      - key: AUTH0_CLIENT_ID
+        sync: false
+      - key: AUTH0_CLIENT_SECRET
+        sync: false
+      - key: AUTH0_AUDIENCE
+        sync: false
+      - key: AUTH0_CALLBACK_URL
+        value: https://edgeroute.onrender.com/auth/callback
+
       # Appwrite configuration
       - key: USE_APPWRITE
-        value: "true"
+        value: "false"
       - key: APPWRITE_ENDPOINT
         value: https://cloud.appwrite.io/v1
       - key: APPWRITE_PROJECT_ID
@@ -34,23 +48,7 @@ services:
       - key: APPWRITE_API_KEY
         sync: false
       - key: APPWRITE_DATABASE_ID
-        sync: false
-      - key: APPWRITE_USERS_COLLECTION_ID
-        value: users
-      - key: APPWRITE_ROADMAPS_COLLECTION_ID
-        value: roadmaps
-      - key: APPWRITE_ROADMAP_NODES_COLLECTION_ID
-        value: roadmap_nodes
-      - key: APPWRITE_USER_PROGRESS_COLLECTION_ID
-        value: user_progress
-      - key: APPWRITE_COMMENTS_COLLECTION_ID
-        value: comments
-      - key: APPWRITE_CUSTOM_ROADMAPS_COLLECTION_ID
-        value: custom_roadmaps
-      - key: APPWRITE_CUSTOM_ROADMAP_NODES_COLLECTION_ID
-        value: custom_roadmap_nodes
-      - key: APPWRITE_STORAGE_ID
-        value: profile_pictures
+        value: edgeroute
 
 databases:
   - name: edgeroute-db

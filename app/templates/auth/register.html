@@ -66,6 +66,19 @@
                         {{ form.submit(class="btn btn-success") }}
                     </div>
                 </form>
+
+                {% if config.USE_AUTH0 %}
+                <div class="mt-4">
+                    <div class="text-center mb-3">
+                        <span class="text-muted">OR</span>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{{ url_for('auth.auth0_login') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-lock me-2"></i> Register with Auth0
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
             <div class="card-footer text-center">
                 <small class="text-muted">

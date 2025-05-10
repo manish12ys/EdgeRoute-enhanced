@@ -38,6 +38,13 @@ def login():
 
 @auth.route("/logout")
 def logout():
+    from app import USE_AUTH0
+
+    # If using Auth0 and user is authenticated with Auth0
+    if USE_AUTH0 and current_user.is_authenticated and current_user.auth0_user_id:
+        return redirect(url_for('auth.auth0_logout'))
+
+    # Otherwise, use regular logout
     logout_user()
     return redirect(url_for('main.index'))
 

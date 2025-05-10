@@ -14,8 +14,9 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message_category = 'info'
 bcrypt = Bcrypt()
 
-# Flag to determine whether to use Appwrite
+# Flags to determine which services to use
 USE_APPWRITE = os.environ.get('USE_APPWRITE', 'false').lower() == 'true'
+USE_AUTH0 = os.environ.get('USE_AUTH0', 'false').lower() == 'true'
 
 def create_app(config_name='default'):
     app = Flask(__name__)
@@ -26,6 +27,11 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+
+    # Initialize Auth0 if enabled
+    if USE_AUTH0:
+        from app.auth0 import auth0, setup_auth0
+        setup_auth0(app)
 
     # Initialize Appwrite if enabled
     if USE_APPWRITE:
