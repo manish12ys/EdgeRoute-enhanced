@@ -21,8 +21,7 @@ class Config:
     AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
     AUTH0_CLIENT_ID = os.environ.get('AUTH0_CLIENT_ID')
     AUTH0_CLIENT_SECRET = os.environ.get('AUTH0_CLIENT_SECRET')
-    AUTH0_AUDIENCE = os.environ.get('AUTH0_AUDIENCE')
-    AUTH0_CALLBACK_URL = os.environ.get('AUTH0_CALLBACK_URL', 'http://localhost:5000/auth/callback')
+    APP_SECRET_KEY = os.environ.get('APP_SECRET_KEY')
 
     # Appwrite configuration
     USE_APPWRITE = os.environ.get('USE_APPWRITE', 'false').lower() == 'true'
